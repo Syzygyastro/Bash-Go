@@ -57,7 +57,7 @@ func main() {
 			os.Exit(0)
 
 		} else if v, err := execInPath(fields[0], paths); err == nil {
-			err := executioner(v, fields[1:]...)
+			err := executioner(v, fields...)
 			if err != nil {
 				fmt.Println(err)
 			}
