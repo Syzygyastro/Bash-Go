@@ -33,7 +33,7 @@ func main() {
 			fmt.Println(strings.Join(strings.Fields(command)[1:], " "))
 		} else if fields[0] == "type" {
 			if val, exists := set[fields[1]]; exists {
-				fmt.Println(val, "is a shell builtin")
+				fmt.Println(fields[1], "is a shell builtin")
 			} else {
 				fmt.Println(fields[1] + ": not found")
 			}
