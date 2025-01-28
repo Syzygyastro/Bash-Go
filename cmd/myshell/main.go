@@ -23,12 +23,12 @@ func execInPath(exec string, basePaths []string) (string, error) {
 
 func main() {
 	for {
-		// set := map[string]bool{}
+		set := map[string]bool{}
 
-		// builtins := []string{"echo", "type", "exit"}
-		// for _, builtin := range builtins {
-		// 	set[builtin] = true
-		// }
+		builtins := []string{"echo", "type", "exit", "type"}
+		for _, builtin := range builtins {
+			set[builtin] = true
+		}
 
 		pathVariable := os.Getenv("PATH")
 		paths := strings.Split(pathVariable, ":")
@@ -51,7 +51,9 @@ func main() {
 			fmt.Println(strings.Join(strings.Fields(command)[1:], " "))
 
 		} else if fields[0] == "type" {
-			if v, err := execInPath(fields[1], paths); err == nil {
+			if set[fields[1]] {
+				fmt.Println(fields[1], "is a shell builtin")
+			} else if v, err := execInPath(fields[1], paths); err == nil {
 				fmt.Println(fields[1], "is", v)
 
 			} else {
