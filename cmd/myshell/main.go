@@ -29,9 +29,7 @@ func main() {
 
 		pathVariable := os.Getenv("PATH")
 		paths := strings.Split(pathVariable, ":")
-		for i, path := range paths {
-			paths[i] = strings.ReplaceAll(path, " ", "") // Clean up each path
-		}
+
 		fmt.Fprint(os.Stdout, "$ ")
 
 		command, err := bufio.NewReader(os.Stdin).ReadString('\n')
@@ -43,7 +41,7 @@ func main() {
 		command = command[:len(command)-1] // Remove the newline character
 		fields := strings.Fields(command)
 		fmt.Println(filepath.Rel(paths[0], fields[1]))
-		// fmt.Println(paths)
+		fmt.Println(paths)
 		if command == "exit 0" {
 			os.Exit(0)
 		} else if fields[0] == "echo" {
