@@ -24,6 +24,8 @@ func execInPath(exec string, basePaths []string) (string, error) {
 
 func executioner(filepath string, args ...string) error {
 	cmd := exec.Command(filepath, args...)
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
 	err := cmd.Run()
 	return err
 }
@@ -55,7 +57,10 @@ func main() {
 			os.Exit(0)
 
 		} else if v, err := execInPath(fields[0], paths); err == nil {
-			executioner(v, fields...)
+			err := executioner(v, fields[1:]...)
+			if err != nil {
+				fmt.Println(err)
+			}
 
 		} else if fields[0] == "echo" {
 			fmt.Println(strings.Join(strings.Fields(command)[1:], " "))
