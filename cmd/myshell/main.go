@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -11,11 +10,15 @@ import (
 
 func execInPath(exec string, basePaths []string) (string, error) {
 	for _, basePath := range basePaths {
-		if p, err := filepath.Rel(basePath, exec); err == nil {
-			return filepath.Join(basePath, p), err
+		// Join the base path and the executable name
+		fullPath := filepath.Join(basePath, exec)
+
+		// Check if the file exists and is executable
+		if _, err := os.Stat(fullPath); err == nil {
+			return fullPath, nil
 		}
 	}
-	return "", errors.New("")
+	return "", fmt.Errorf("not found")
 }
 
 func main() {
