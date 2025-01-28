@@ -41,8 +41,8 @@ func main() {
 		}
 		command = command[:len(command)-1] // Remove the newline character
 		fields := strings.Fields(command)
-		fmt.Println(filepath.Rel(paths[0], fields[1]))
-		fmt.Println(paths)
+		// fmt.Println(filepath.Rel(paths[0], fields[1]))
+		// fmt.Println(paths)
 		if command == "exit 0" {
 			os.Exit(0)
 		} else if fields[0] == "echo" {
