@@ -55,7 +55,8 @@ func main() {
 			os.Exit(0)
 
 		} else if v, err := execInPath(fields[0], paths); err == nil {
-			executioner(v, fields[1:]...)
+			executioner(v, fields...)
+
 		} else if fields[0] == "echo" {
 			fmt.Println(strings.Join(strings.Fields(command)[1:], " "))
 
