@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -16,8 +17,13 @@ func main() {
 		}
 		command = command[:len(command)-1] // Remove the newline character
 		if command == "exit 0" {
-			break
+			os.Exit(0)
+		} else if strings.Split(command, None)[0] == "echo" {
+			fmt.Println(strings.Join(strings.Split(command, None)[1:], None))
+		} else {
+			fmt.Println(command + ": command not found")
 		}
-		fmt.Println(command + ": command not found")
+
 	}
+
 }
