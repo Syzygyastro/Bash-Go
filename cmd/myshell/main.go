@@ -56,8 +56,8 @@ func main() {
 		if command == "exit 0" {
 			os.Exit(0)
 
-		} else if v, err := execInPath(fields[0], paths); err == nil {
-			err := executioner(v, fields[1:]...)
+		} else if _, err := execInPath(fields[0], paths); err == nil {
+			err := executioner(fields[0], fields[1:]...)
 			if err != nil {
 				fmt.Println("Error:", err)
 			}
