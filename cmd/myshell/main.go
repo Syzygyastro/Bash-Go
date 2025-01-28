@@ -11,6 +11,11 @@ func main() {
 	for {
 		set := map[string]bool{}
 
+		builtins := []string{"echo", "type", "exit"}
+		for _, builtin := range builtins {
+			set[builtin] = true
+		}
+
 		fmt.Fprint(os.Stdout, "$ ")
 
 		command, err := bufio.NewReader(os.Stdin).ReadString('\n')
