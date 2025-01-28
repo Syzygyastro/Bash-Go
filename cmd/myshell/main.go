@@ -50,7 +50,7 @@ func main() {
 		} else if fields[0] == "echo" {
 			fmt.Println(strings.Join(strings.Fields(command)[1:], " "))
 		} else if fields[0] == "type" {
-			if v, err := execInPath(fields[1], paths); err != nil {
+			if v, err := execInPath(fields[1], paths); err == nil {
 				fmt.Println(fields[1], "is ", v)
 			} else {
 				fmt.Println(fields[1] + ": not found")
