@@ -11,8 +11,8 @@ import (
 
 func execInPath(exec string, basePaths []string) (string, error) {
 	for _, basePath := range basePaths {
-		if _, err := filepath.Rel(basePath, exec); err == nil {
-			return filepath.Join(basePath, exec), err
+		if p, err := filepath.Rel(basePath, exec); err == nil {
+			return filepath.Join(basePath, p), err
 		}
 	}
 	return "", errors.New("")
