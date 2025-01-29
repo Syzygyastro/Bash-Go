@@ -79,7 +79,7 @@ func main() {
 			path := fields[1]
 			err := pathExists(path)
 			if err != nil {
-				fmt.Println("cd: " + path + ":No such file or directory")
+				fmt.Println("cd: ", path, " :No such file or directory")
 			} else {
 				os.Chdir(path)
 			}
