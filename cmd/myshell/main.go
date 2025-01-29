@@ -138,6 +138,8 @@ func main() {
 
 		command := autoCompleter(fd, builtins)
 
+		term.Restore(fd, oldState)
+
 		fields := strings.Fields(command)
 
 		if command == "exit 0" {
