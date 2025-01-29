@@ -49,10 +49,11 @@ func tildaExpander(path string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if path && and path[0] == '~' {
+	if len(path) > 0 && path[0] == '~' {
 		return filepath.Join(homeDir, path[1:]), nil
 	} else {
 		return path, nil
+	}
 }
 
 func main() {
