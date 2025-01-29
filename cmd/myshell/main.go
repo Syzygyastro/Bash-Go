@@ -80,7 +80,7 @@ func autoCompleter(fd int, builtins []string) string {
 			if completion != "" {
 				// Overwrite current line, show completed command + space
 				fmt.Print("\r$ " + completion + " ")
-				input = completion
+				input = completion + " "
 			}
 
 		case 127: // Backspace
