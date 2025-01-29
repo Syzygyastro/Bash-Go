@@ -96,7 +96,6 @@ func autoCompleter(fd int, builtins []string) string {
 
 		case 10: //Enter
 			//Enter
-			fmt.Println()
 			return input
 
 		case 3: //Ctrl+C
