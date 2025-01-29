@@ -141,7 +141,7 @@ func main() {
 		fmt.Println()
 
 		// Trim & parse
-		command = strings.TrimSpace(command)
+		// command = strings.TrimSpace(command)
 		fields := strings.Fields(command)
 		if len(fields) == 0 {
 			// No input: go to the next prompt
