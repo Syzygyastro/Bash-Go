@@ -139,6 +139,7 @@ func main() {
 		command := autoCompleter(fd, builtins)
 
 		term.Restore(fd, oldState)
+		fmt.Fprint(os.Stdout, "$ ")
 
 		fields := strings.Fields(command)
 
