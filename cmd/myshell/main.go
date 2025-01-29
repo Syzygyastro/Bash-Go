@@ -77,7 +77,8 @@ func autoCompleter(fd int, builtins []string) string {
 			for _, builtin := range builtins {
 				if strings.HasPrefix(builtin, input) {
 					fmt.Print(builtin[len(input):])
-					input = builtin + " "
+					fmt.Print(" ")
+					input = builtin
 					break
 				}
 			}
