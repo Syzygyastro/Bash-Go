@@ -86,7 +86,6 @@ func autoCompleter(fd int, builtins []string) string {
 			return input
 
 		case 127: //Backspace
-			//Backspace
 			if len(input) > 0 {
 				fmt.Print("\b \b")
 				input = input[:len(input)-1]
