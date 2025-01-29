@@ -30,32 +30,11 @@ func executioner(fileName string, args ...string) error {
 	return err
 }
 
-// Function to check if a path exists
-// func dirChanger(path string) (string, error) {
-// 	switch path[0] {
-// 	case '/':
-// 		err := os.Chdir(path)
-// 		return path, err
-
-// 	case '.':
-// 		cwd, _ := os.Getwd()
-// 		fullPath := filepath.Join(path, cwd)
-// 		err := os.Chdir(fullPath)
-// 		return fullPath, err
-
-// 	case '~':
-// 		return path, nil
-
-// 	default:
-// 		// '..'
-// 		cwd, _ := os.Getwd()
-// 		new_path := cwd[:strings.LastIndex(cwd, "/")]
-// 		err := os.Chdir(new_path)
-// 		return path, err
-// 	}
-// }
-
 func dirChanger(path string) (string, error) {
+	path, err = tildaExpander(path)
+	if err != nil {
+		return "", err
+	}
 	newPath, err := filepath.Abs(path)
 	if err != nil {
 		return "", err
@@ -63,6 +42,17 @@ func dirChanger(path string) (string, error) {
 		err := os.Chdir(newPath)
 		return newPath, err
 	}
+}
+
+func tildaExpander(path string) (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+	if path && and path[0] == '~' {
+		return filepath.Join(homeDir, path[1:]), nil
+	} else {
+		return path, nil
 }
 
 func main() {
