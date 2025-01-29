@@ -34,7 +34,7 @@ func main() {
 	for {
 		set := map[string]bool{}
 
-		builtins := []string{"echo", "type", "exit", "type"}
+		builtins := []string{"echo", "type", "exit", "type", "pwd"}
 		for _, builtin := range builtins {
 			set[builtin] = true
 		}
