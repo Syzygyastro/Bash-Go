@@ -30,6 +30,7 @@ func executioner(fileName string, args ...string) error {
 	return err
 }
 
+// Changes the directory in cd command
 func dirChanger(path string) (string, error) {
 	path, err := tildaExpander(path)
 	if err != nil {
@@ -44,6 +45,7 @@ func dirChanger(path string) (string, error) {
 	}
 }
 
+// Expands Tilda in cd command
 func tildaExpander(path string) (string, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
