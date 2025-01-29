@@ -31,14 +31,14 @@ func executioner(fileName string, args ...string) error {
 func dirChanger(path string) (string, error) {
 	expanded, err := tildaExpander(path)
 	if err != nil {
-		return "", err
+		return path, err
 	}
 	newPath, err := filepath.Abs(expanded)
 	if err != nil {
-		return "", err
+		return path, err
 	}
 	if err := os.Chdir(newPath); err != nil {
-		return "", err
+		return path, err
 	}
 	return newPath, nil
 }
