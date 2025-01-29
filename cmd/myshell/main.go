@@ -30,6 +30,20 @@ func executioner(fileName string, args ...string) error {
 	return err
 }
 
+// Function to check if a path exists
+func pathExists(path string) error {
+	// Use os.Stat to get the file info
+	_, err := os.Stat(path)
+
+	// If an error occurs, check if it's "not found" (os.ErrNotExist)
+	if os.IsNotExist(err) {
+		return err // Path does not exist
+	}
+
+	// If there's no error, the path exists
+	return nil
+}
+
 func main() {
 	for {
 		set := map[string]bool{}
@@ -55,12 +69,21 @@ func main() {
 
 		if command == "exit 0" {
 			os.Exit(0)
-			//
+
 		} else if fields[0] == "pwd" {
 			mydir, err := os.Getwd()
 			if err == nil {
 				fmt.Println(mydir)
 			}
+		} else if fields[0] == "cd" {
+			path := fields[1]
+			err := pathExists(path)
+			if err != nil {
+				fmt.Println("cd:", path, ": no such file or directory")
+			} else {
+				os.Chdir(path)
+			}
+
 		} else if _, err := execInPath(fields[0], paths); err == nil {
 			err := executioner(fields[0], fields[1:]...)
 			if err != nil {
