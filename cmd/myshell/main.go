@@ -56,6 +56,11 @@ func main() {
 		if command == "exit 0" {
 			os.Exit(0)
 
+		} else if fields[0] == "pwd" {
+			mydir, err := os.Getwd()
+			if err == nil {
+				fmt.Println(mydir)
+			}
 		} else if _, err := execInPath(fields[0], paths); err == nil {
 			err := executioner(fields[0], fields[1:]...)
 			if err != nil {
