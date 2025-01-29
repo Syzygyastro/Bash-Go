@@ -136,8 +136,8 @@ func main() {
 		fmt.Fprint(os.Stdout, "$ ")
 
 		command := autoCompleter(fd, builtins)
-		fmt.Println()
 		term.Restore(fd, oldState)
+		fmt.Println()
 		command = strings.TrimSpace(command)
 		fields := strings.Fields(command)
 		// fmt.Println(command)
