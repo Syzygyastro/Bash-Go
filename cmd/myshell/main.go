@@ -142,7 +142,7 @@ func main() {
 		command = strings.ReplaceAll(command, "\n", "")
 		command = strings.ReplaceAll(command, "\r", "")
 		fields := strings.Fields(command)
-		fmt.Println(command)
+		// fmt.Println(command)
 		if command == "exit 0" {
 			os.Exit(0)
 
