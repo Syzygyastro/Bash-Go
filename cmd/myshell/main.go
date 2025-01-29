@@ -72,7 +72,7 @@ func autoCompleter(fd int, builtins []string) string {
 		switch b[0] {
 
 		case 9: //Tab
-			//Autocomplete here
+			//Autocomplete heree
 
 			for _, builtin := range builtins {
 				if strings.HasPrefix(builtin, input) {
