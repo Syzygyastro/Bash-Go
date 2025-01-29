@@ -84,7 +84,7 @@ func autoCompleter(fd int, builtins []string) string {
 
 			if completion != "" {
 				// Print the completed command, including the space after it
-				fmt.Print("\r$ " + completion + " ")
+				fmt.Print("\r " + completion + " ")
 				input = completion
 			}
 
