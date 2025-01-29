@@ -93,10 +93,10 @@ func autoCompleter(fd int, builtins []string) string {
 		case 10: // Enter (\n)
 			return input
 
-		case 13: // Carriage return (\r)
-			// Ignore carriage returns in raw mode
-			// Some terminals send \r before \n
-			continue
+		// case 13: // Carriage return (\r)
+		// 	// Ignore carriage returns in raw mode
+		// 	// Some terminals send \r before \n
+		// 	continue
 
 		case 3: // Ctrl+C
 			os.Exit(0)
