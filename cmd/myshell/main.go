@@ -113,9 +113,9 @@ func main() {
 	builtins := []string{"echo", "type", "exit", "pwd"}
 
 	// Keep track of which commands are builtin
-	builtinSet := make(map[string]bool)
+	set := make(map[string]bool)
 	for _, b := range builtins {
-		builtinSet[b] = true
+		set[b] = true
 	}
 
 	// Split $PATH so we can search executables
@@ -155,62 +155,40 @@ func main() {
 			continue
 		}
 
-		// Handle builtins and external commands
-		switch fields[0] {
-		case "exit":
-			// (Optionally handle `exit <code>`)
+		if command == "exit 0" {
 			os.Exit(0)
 
-		case "pwd":
-			if wd, err := os.Getwd(); err == nil {
-				fmt.Println(wd)
+		} else if fields[0] == "pwd" {
+			mydir, err := os.Getwd()
+			if err == nil {
+				fmt.Println(mydir)
+			}
+		} else if fields[0] == "cd" {
+			path := fields[1]
+			fullPath, err := dirChanger(path)
+			if err != nil {
+				fmt.Println("cd: " + fullPath + ": No such file or directory")
+			}
+		} else if _, err := execInPath(fields[0], paths); err == nil {
+			err := executioner(fields[0], fields[1:]...)
+			if err != nil {
+				fmt.Println("Error:", err)
 			}
 
-		case "cd":
-			// Handle "cd" with or without argument
-			if len(fields) < 2 {
-				// No arg => cd to home
-				homeDir, e := os.UserHomeDir()
-				if e != nil {
-					fmt.Println("cd: error locating home directory:", e)
-				} else if _, e := dirChanger(homeDir); e != nil {
-					fmt.Println("cd:", e)
-				}
+		} else if fields[0] == "echo" {
+			fmt.Println(strings.Join(strings.Fields(command)[1:], " "))
+
+		} else if fields[0] == "type" {
+			if set[fields[1]] {
+				fmt.Println(fields[1], "is a shell builtin")
+			} else if v, err := execInPath(fields[1], paths); err == nil {
+				fmt.Println(fields[1], "is", v)
+
 			} else {
-				fullPath, e := dirChanger(fields[1])
-				if e != nil {
-					fmt.Println("cd:", fullPath, ": No such file or directory")
-				}
+				fmt.Println(fields[1] + ": not found")
 			}
-
-		case "echo":
-			// Print remaining fields
-			fmt.Println(strings.Join(fields[1:], " "))
-
-		case "type":
-			if len(fields) < 2 {
-				fmt.Println("type: usage: type <command>")
-			} else {
-				target := fields[1]
-				if builtinSet[target] {
-					fmt.Println(target, "is a shell builtin")
-				} else if found, e := execInPath(target, paths); e == nil {
-					fmt.Println(target, "is", found)
-				} else {
-					fmt.Println(target + ": not found")
-				}
-			}
-
-		default:
-			// Not a builtin, try external command
-			if fullPath, e := execInPath(fields[0], paths); e == nil {
-				err := executioner(fullPath, fields[1:]...)
-				if err != nil {
-					fmt.Println("Error:", err)
-				}
-			} else {
-				fmt.Println(command + ": command not found")
-			}
+		} else {
+			fmt.Println(command + ": command not found")
 		}
 
 		// Re-enter raw mode for next input loop
