@@ -71,18 +71,22 @@ func autoCompleter(fd int, builtins []string) string {
 
 		switch b[0] {
 
-		case 9: //Tab
-			//Autocomplete heree
-
-			for _, builtin := range builtins {
-				if strings.HasPrefix(builtin, input) {
-					fmt.Print(builtin[len(input):])
-					fmt.Print(" ")
-					input = builtin
+		case 9: // Tab key (ASCII 9)
+			// Handle completion for built-in commands
+			var completion string
+			for _, cmd := range builtins {
+				if strings.HasPrefix(cmd, input) {
+					// If there's a match, complete the command
+					completion = cmd
 					break
 				}
 			}
 
+			if completion != "" {
+				// Print the completed command, including the space after it
+				fmt.Print("\r> " + completion + " ")
+				input = completion
+			}
 			return input
 
 		case 127: //Backspace
