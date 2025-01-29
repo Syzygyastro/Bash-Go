@@ -31,27 +31,37 @@ func executioner(fileName string, args ...string) error {
 }
 
 // Function to check if a path exists
-func dirChanger(path string) (string error) {
-	switch path[0] {
-	case '/':
-		err := os.Chdir(path)
-		return path, err
+// func dirChanger(path string) (string, error) {
+// 	switch path[0] {
+// 	case '/':
+// 		err := os.Chdir(path)
+// 		return path, err
 
-	case '.':
-		cwd, _ := os.Getwd()
-		fullPath := filepath.Join(path, cwd)
-		err := os.Chdir(fullPath)
-		return fullPath, err
+// 	case '.':
+// 		cwd, _ := os.Getwd()
+// 		fullPath := filepath.Join(path, cwd)
+// 		err := os.Chdir(fullPath)
+// 		return fullPath, err
 
-	case '~':
-		return path, nil
+// 	case '~':
+// 		return path, nil
 
-	default:
-		// '..'
-		cwd, _ := os.Getwd()
-		new_path := cwd[:strings.LastIndex(cwd, "/")]
-		err := os.Chdir(new_path)
-		return path, nil
+// 	default:
+// 		// '..'
+// 		cwd, _ := os.Getwd()
+// 		new_path := cwd[:strings.LastIndex(cwd, "/")]
+// 		err := os.Chdir(new_path)
+// 		return path, err
+// 	}
+// }
+
+func dirChanger(path string) (string, error) {
+	newPath, err := filepath.Abs(path)
+	if err != nil {
+		return "", err
+	} else {
+		err := os.Chdir(newPath)
+		return newPath, err
 	}
 }
 
@@ -88,13 +98,10 @@ func main() {
 			}
 		} else if fields[0] == "cd" {
 			path := fields[1]
-			err := dirChanger(path)
+			fullPath, err := dirChanger(path)
 			if err != nil {
-				fmt.Println("cd: " + path + ": No such file or directory")
-			} else {
-				os.Chdir(path)
+				fmt.Println("cd: " + fullPath + ": No such file or directory")
 			}
-
 		} else if _, err := execInPath(fields[0], paths); err == nil {
 			err := executioner(fields[0], fields[1:]...)
 			if err != nil {
