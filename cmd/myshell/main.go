@@ -89,11 +89,14 @@ func autoCompleter(builtins []string, basePaths []string) string {
 		switch b[0] {
 		case 9: // Tab key (ASCII 9)
 			// Handle completion for built-in commands
-			execs, err := execInPath(input, basePaths)
-			if err == nil {
-				fmt.Print("\r$ " + execs + " ")
-				input = execs + " "
+			// Try to complete using executables in PATH
+			if execPath, err := execInPath(input, basePaths); err == nil {
+				fmt.Print("\r$ " + execPath + " ")
+				input = execPath + " "
+				continue
 			}
+
+			// Try to complete using built-in commands
 			var completion string
 			for _, cmd := range builtins {
 				if strings.HasPrefix(cmd, input) {
@@ -101,6 +104,7 @@ func autoCompleter(builtins []string, basePaths []string) string {
 					break
 				}
 			}
+
 			if completion != "" {
 				// Overwrite current line, show completed command + space
 				fmt.Print("\r$ " + completion + " ")
@@ -159,7 +163,7 @@ func main() {
 		fmt.Fprint(os.Stdout, "$ ")
 
 		// Read command using raw-mode input
-		command := autoCompleter(builtins)
+		command := autoCompleter(builtins, paths)
 
 		// Restore cooked mode before processing
 		term.Restore(fd, oldState)
