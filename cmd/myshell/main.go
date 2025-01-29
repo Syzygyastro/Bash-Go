@@ -31,17 +31,28 @@ func executioner(fileName string, args ...string) error {
 }
 
 // Function to check if a path exists
-func pathExists(path string) error {
-	// Use os.Stat to get the file info
-	_, err := os.Stat(path)
+func dirChanger(path string) (string error) {
+	switch path[0] {
+	case '/':
+		err := os.Chdir(path)
+		return path, err
 
-	// If an error occurs, check if it's "not found" (os.ErrNotExist)
-	if os.IsNotExist(err) {
-		return err // Path does not exist
+	case '.':
+		cwd, _ := os.Getwd()
+		fullPath := filepath.Join(path, cwd)
+		err := os.Chdir(fullPath)
+		return fullPath, err
+
+	case '~':
+		return path, nil
+
+	default:
+		// '..'
+		cwd, _ := os.Getwd()
+		new_path := cwd[:strings.LastIndex(cwd, "/")]
+		err := os.Chdir(new_path)
+		return path, nil
 	}
-
-	// If there's no error, the path exists
-	return nil
 }
 
 func main() {
@@ -77,7 +88,7 @@ func main() {
 			}
 		} else if fields[0] == "cd" {
 			path := fields[1]
-			err := pathExists(path)
+			err := dirChanger(path)
 			if err != nil {
 				fmt.Println("cd: " + path + ": No such file or directory")
 			} else {
