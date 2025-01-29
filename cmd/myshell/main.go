@@ -10,11 +10,30 @@ import (
 	"golang.org/x/term"
 )
 
+// func execInPath(execName string, basePaths []string) (string, error) {
+// 	for _, basePath := range basePaths {
+// 		fullPath := filepath.Join(basePath, execName)
+// 		if _, err := os.Stat(fullPath); err == nil {
+// 			return fullPath, nil
+// 		}
+// 	}
+// 	return "", fmt.Errorf("not found")
+// }
+
 func execInPath(execName string, basePaths []string) (string, error) {
-	for _, basePath := range basePaths {
-		fullPath := filepath.Join(basePath, execName)
-		if _, err := os.Stat(fullPath); err == nil {
-			return fullPath, nil
+
+	for _, dir := range basePaths {
+		// Read entries in the directory
+		entries, err := os.ReadDir(dir)
+		if err != nil {
+			continue
+		}
+
+		for _, e := range entries {
+			// Construct the full path to the file
+			if strings.HasPrefix(execName, e.Name()) {
+				return filepath.Join(dir, e.Name()), nil
+			}
 		}
 	}
 	return "", fmt.Errorf("not found")
@@ -57,7 +76,7 @@ func tildaExpander(path string) (string, error) {
 
 // autoCompleter reads input in raw mode, handles tab completion for builtins,
 // and returns the full command once Enter is pressed.
-func autoCompleter(fd int, builtins []string) string {
+func autoCompleter(builtins []string, basePaths []string) string {
 	var input string
 	for {
 		b := make([]byte, 1)
@@ -70,6 +89,11 @@ func autoCompleter(fd int, builtins []string) string {
 		switch b[0] {
 		case 9: // Tab key (ASCII 9)
 			// Handle completion for built-in commands
+			execs, err := execInPath(input, basePaths)
+			if err == nil {
+				fmt.Print("\r$ " + execs + " ")
+				input = execs + " "
+			}
 			var completion string
 			for _, cmd := range builtins {
 				if strings.HasPrefix(cmd, input) {
@@ -135,7 +159,7 @@ func main() {
 		fmt.Fprint(os.Stdout, "$ ")
 
 		// Read command using raw-mode input
-		command := autoCompleter(fd, builtins)
+		command := autoCompleter(builtins)
 
 		// Restore cooked mode before processing
 		term.Restore(fd, oldState)
