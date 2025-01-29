@@ -87,7 +87,6 @@ func autoCompleter(fd int, builtins []string) string {
 				fmt.Print("\r$ " + completion + " ")
 				input = completion
 			}
-			return input
 
 		case 127: //Backspace
 			if len(input) > 0 {
