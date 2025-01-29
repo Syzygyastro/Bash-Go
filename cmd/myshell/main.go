@@ -1,12 +1,13 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"golang.org/x/term"
 )
 
 func execInPath(exec string, basePaths []string) (string, error) {
@@ -58,27 +59,82 @@ func tildaExpander(path string) (string, error) {
 	}
 }
 
-func main() {
+func autoCompleter(fd int, builtins []string) string {
+	input := ""
 	for {
-		set := map[string]bool{}
-
-		builtins := []string{"echo", "type", "exit", "type", "pwd"}
-		for _, builtin := range builtins {
-			set[builtin] = true
+		b := make([]byte, 1)
+		_, err := os.Stdin.Read(b)
+		if err != nil {
+			fmt.Println(err)
+			return input
 		}
 
-		pathVariable := os.Getenv("PATH")
-		paths := strings.Split(pathVariable, ":")
+		switch b[0] {
+
+		case 9: //Tab
+			//Autocomplete here
+
+			for _, builtin := range builtins {
+				if strings.HasPrefix(builtin, input) {
+					fmt.Print(builtin[len(input):])
+					input = builtin
+					break
+				}
+			}
+
+			return input
+
+		case 127: //Backspace
+			//Backspace
+			if len(input) > 0 {
+				fmt.Print("\b \b")
+				input = input[:len(input)-1]
+			}
+
+		case 10: //Enter
+			//Enter
+			fmt.Println()
+			return input
+
+		case 3: //Ctrl+C
+			os.Exit(0)
+
+		default:
+			fmt.Print(string(b[0]))
+			input += string(b[0])
+		}
+
+	}
+}
+
+func main() {
+	set := map[string]bool{}
+
+	builtins := []string{"echo", "type", "exit", "type", "pwd"}
+	for _, builtin := range builtins {
+		set[builtin] = true
+	}
+
+	pathVariable := os.Getenv("PATH")
+	paths := strings.Split(pathVariable, ":")
+
+	// Convert the terminal into RAW mode from COOKED MODE
+	fd := int(os.Stdin.Fd())
+	oldState, err := term.MakeRaw(fd)
+	// Defer the terminal to COOKED MODE to restore previous state
+	defer term.Restore(fd, oldState)
+	if err != nil {
+		fmt.Fprintln(os.Stderr, "Error making terminal raw:", err)
+		return
+	}
+
+	// REPL
+	for {
 
 		fmt.Fprint(os.Stdout, "$ ")
 
-		command, err := bufio.NewReader(os.Stdin).ReadString('\n')
+		command := autoCompleter(fd, builtins)
 
-		if err != nil {
-			fmt.Fprintln(os.Stderr, "Error reading input:", err)
-			os.Exit(1)
-		}
-		command = command[:len(command)-1] // Remove the newline character
 		fields := strings.Fields(command)
 
 		if command == "exit 0" {
