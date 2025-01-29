@@ -31,7 +31,7 @@ func executioner(fileName string, args ...string) error {
 }
 
 func dirChanger(path string) (string, error) {
-	path, err = tildaExpander(path)
+	path, err := tildaExpander(path)
 	if err != nil {
 		return "", err
 	}
