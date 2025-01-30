@@ -90,8 +90,9 @@ func autoCompleter(builtins []string, basePaths []string) string {
 		case 9: // Tab key (ASCII 9)
 			// Try to complete using executables in PATH
 			if execPath, err := execInPath(input, basePaths); err == nil {
-				fmt.Print("\r$ " + execPath + " ")
-				input = execPath + " "
+				execName := filepath.Base(execPath)
+				fmt.Print("\r$ " + execName + " ")
+				input = execName + " "
 				continue
 			}
 
