@@ -10,17 +10,17 @@ import (
 	"golang.org/x/term"
 )
 
-// func execInPath(execName string, basePaths []string) (string, error) {
-// 	for _, basePath := range basePaths {
-// 		fullPath := filepath.Join(basePath, execName)
-// 		if _, err := os.Stat(fullPath); err == nil {
-// 			return fullPath, nil
-// 		}
-// 	}
-// 	return "", fmt.Errorf("not found")
-// }
-
 func execInPath(execName string, basePaths []string) (string, error) {
+	for _, basePath := range basePaths {
+		fullPath := filepath.Join(basePath, execName)
+		if _, err := os.Stat(fullPath); err == nil {
+			return fullPath, nil
+		}
+	}
+	return "", fmt.Errorf("not found")
+}
+
+func execMatchFuzzy(execName string, basePaths []string) (string, error) {
 
 	for _, dir := range basePaths {
 		// Read entries in the directory
@@ -89,7 +89,7 @@ func autoCompleter(builtins []string, basePaths []string) string {
 		switch b[0] {
 		case 9: // Tab key (ASCII 9)
 			// Try to complete using executables in PATH
-			if execPath, err := execInPath(input, basePaths); err == nil {
+			if execPath, err := execMatchFuzzy(input, basePaths); err == nil {
 				execName := filepath.Base(execPath)
 				fmt.Print("\r$ " + execName + " ")
 				input = execName + " "
